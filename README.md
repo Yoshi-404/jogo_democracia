@@ -12,8 +12,6 @@
 
 *"O jogo onde o voto é soberano e o golpe é só no tatame!"*
 
-[🕹️ Jogar Localmente](#-como-jogar-localmente) • [🎮 Controles](#-guia-de-comandos) • [🥊 Personagens](#-elenco-dos-defensores-da-democracia) • [🏛️ Pílulas de Cidadania](#-pílulas-de-cidadania--políticas-públicas) 
-
 </div>
 
 ---
