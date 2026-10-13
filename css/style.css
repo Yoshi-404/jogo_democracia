@@ -317,12 +317,15 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.88);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 60;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 10px;
 }
 
 .modal-box {
@@ -1680,6 +1683,11 @@ body {
   .screen {
     padding: 6px 12px !important;
     gap: 4px !important;
+    box-sizing: border-box !important;
+  }
+
+  .screen:not(#fight-screen) {
+    overflow-y: auto !important;
   }
 
   /* TELA DE TÍTULO COMPACTA PARA CABER 100% NA TELA DO CELULAR */
@@ -1774,6 +1782,9 @@ body {
 
   .character-carousel {
     gap: 8px !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    padding: 2px 4px !important;
   }
 
   .char-card-select {
@@ -1807,6 +1818,7 @@ body {
 
   /* CONTROLES TOUCH NO COMBATE */
   .touch-controls-container {
+    display: flex !important;
     bottom: 4px !important;
     padding: 0 max(8px, env(safe-area-inset-right, 8px)) 0 max(8px, env(safe-area-inset-left, 8px)) !important;
   }
@@ -1828,6 +1840,300 @@ body {
 
   .fight-timer {
     font-size: 20px !important;
+  }
+
+  /* ==========================================================
+     MODAIS COMPACTOS PARA CABEREM 100% NA TELA DO CELULAR
+     ========================================================== */
+  .modal-overlay {
+    padding: 4px !important;
+    align-items: center !important;
+  }
+
+  /* Pílula de Cidadania (Entre Fases) */
+  .civic-card-box {
+    max-height: 96dvh !important;
+    overflow-y: auto !important;
+    padding: 6px 14px !important;
+    width: 96% !important;
+    max-width: 520px !important;
+    border-width: 2px !important;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.3) !important;
+  }
+
+  .civic-badge {
+    font-size: 7.5px !important;
+    margin-bottom: 2px !important;
+    letter-spacing: 0 !important;
+  }
+
+  #civic-title {
+    font-size: 10.5px !important;
+    margin-bottom: 3px !important;
+    line-height: 1.15 !important;
+  }
+
+  .civic-icon {
+    font-size: 18px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .civic-body {
+    font-size: 15px !important;
+    line-height: 1.18 !important;
+    padding: 4px 8px !important;
+    margin-bottom: 3px !important;
+  }
+
+  .civic-stat-highlight {
+    font-size: 7.5px !important;
+    padding: 3px 6px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .civic-action .arcade-btn {
+    padding: 6px 12px !important;
+    font-size: 7.5px !important;
+    box-shadow: 0 2px 0 #000 !important;
+  }
+
+  /* Modal de Instruções */
+  .modal-box.instructions-box {
+    max-height: 96dvh !important;
+    overflow-y: auto !important;
+    padding: 6px 12px !important;
+    width: 96% !important;
+    max-width: 540px !important;
+  }
+
+  .instructions-box h3 {
+    font-size: 9px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .instructions-grid {
+    gap: 3px 8px !important;
+    padding: 5px 8px !important;
+    font-size: 6.5px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .civic-note {
+    font-size: 13px !important;
+    margin-bottom: 5px !important;
+    line-height: 1.15 !important;
+  }
+
+  #btn-close-instructions {
+    padding: 5px 10px !important;
+    font-size: 7px !important;
+  }
+
+  /* Modal de Pausa no Combate */
+  .pause-modal-box {
+    max-height: 96dvh !important;
+    overflow-y: auto !important;
+    padding: 6px 12px !important;
+    width: 96% !important;
+    max-width: 500px !important;
+  }
+
+  .pause-header {
+    margin-bottom: 3px !important;
+  }
+
+  .pause-icon {
+    font-size: 16px !important;
+    margin-bottom: 1px !important;
+  }
+
+  .pause-header h2 {
+    font-size: 11px !important;
+  }
+
+  .pause-stage-info {
+    font-size: 6.5px !important;
+    margin-top: 1px !important;
+  }
+
+  .pause-controls-guide {
+    padding: 3px 8px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .pause-guide-badge {
+    font-size: 6.5px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .pause-guide-grid {
+    gap: 2px 8px !important;
+  }
+
+  .guide-item {
+    font-size: 6px !important;
+    padding: 1px 0 !important;
+  }
+
+  .pause-sliders {
+    gap: 4px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .pause-sliders .settings-group {
+    padding: 3px 6px !important;
+  }
+
+  .slider-header {
+    font-size: 6.5px !important;
+    margin-bottom: 2px !important;
+  }
+
+  .arcade-slider {
+    height: 4px !important;
+  }
+
+  .arcade-slider::-webkit-slider-thumb {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .pause-actions {
+    gap: 4px !important;
+    margin-top: 4px !important;
+  }
+
+  .pause-actions .arcade-btn {
+    padding: 5px 8px !important;
+    font-size: 6.5px !important;
+  }
+
+  /* Modal de Código Secreto */
+  #secret-modal .modal-box {
+    max-height: 96dvh !important;
+    overflow-y: auto !important;
+    padding: 8px 14px !important;
+    max-width: 440px !important;
+  }
+
+  #secret-modal h3 {
+    font-size: 10px !important;
+    margin-bottom: 4px !important;
+  }
+
+  #secret-modal p {
+    font-size: 7px !important;
+    margin-bottom: 5px !important;
+  }
+
+  .secret-hint {
+    font-size: 7px !important;
+    padding: 4px !important;
+    margin-bottom: 6px !important;
+  }
+
+  #secret-input {
+    padding: 6px !important;
+    font-size: 11px !important;
+    margin-bottom: 8px !important;
+  }
+
+  /* Modal de Configurações de Áudio */
+  .settings-modal-box {
+    max-height: 96dvh !important;
+    overflow-y: auto !important;
+    padding: 8px 14px !important;
+    max-width: 440px !important;
+  }
+
+  .settings-modal-box h3 {
+    font-size: 10px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* Tela de Game Over */
+  .game-over-card {
+    max-height: 96dvh !important;
+    overflow-y: auto !important;
+    padding: 6px 14px !important;
+    gap: 3px !important;
+    max-width: 460px !important;
+  }
+
+  #game-over-title {
+    font-size: 12px !important;
+  }
+
+  .game-over-sub {
+    font-size: 7px !important;
+  }
+
+  .final-portrait {
+    font-size: 28px !important;
+    margin: 2px 0 !important;
+  }
+
+  .final-portrait-img {
+    width: 44px !important;
+    height: 44px !important;
+  }
+
+  .final-speech {
+    font-size: 13px !important;
+    margin: 2px 0 !important;
+    padding: 3px 6px !important;
+  }
+
+  .final-stats {
+    font-size: 6.5px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .game-over-actions .arcade-btn {
+    padding: 5px 10px !important;
+    font-size: 7px !important;
+  }
+
+  /* Tela Cinemática Final (Posse) */
+  .ending-cinematic-container {
+    height: 100% !important;
+    max-height: 98dvh !important;
+    padding: 4px 10px !important;
+  }
+
+  .ending-badge {
+    font-size: 7px !important;
+  }
+
+  .ending-title {
+    font-size: 11px !important;
+  }
+
+  .ending-image-wrapper {
+    height: 120px !important;
+    width: 320px !important;
+  }
+
+  .ending-dialogue-box {
+    padding: 4px 8px !important;
+  }
+
+  .speaker-name {
+    font-size: 8px !important;
+  }
+
+  .speaker-role {
+    font-size: 6px !important;
+  }
+
+  .ending-speech-text {
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+  }
+
+  .ending-actions .arcade-btn {
+    padding: 5px 8px !important;
+    font-size: 6.5px !important;
   }
 }
 
