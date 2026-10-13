@@ -1,0 +1,1677 @@
+/* ==========================================================
+   DEMOCRACIA FIGHTER: A Batalha das Urnas
+   Estilo Arcade Retrô 16-Bit / CRT Cabinet CSS
+   ========================================================== */
+
+:root {
+  --bg-dark: #0d1117;
+  --arcade-gold: #f59e0b;
+  --arcade-yellow: #fbbf24;
+  --arcade-red: #ef4444;
+  --arcade-green: #10b981;
+  --arcade-blue: #3b82f6;
+  --life-green: #22c55e;
+  --life-red: #dc2626;
+  --font-pixel: 'Press Start 2P', monospace, sans-serif;
+  --font-arcade: 'VT323', monospace, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background-color: #030712;
+  color: #f8fafc;
+  font-family: var(--font-pixel);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+#game-container {
+  position: relative;
+  width: min(100vw, calc(100vh * (16 / 9)));
+  height: min(100vh, calc(100vw * (9 / 16)));
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 4px solid #374151;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 15px rgba(245, 158, 11, 0.3);
+  overflow: hidden;
+  border-radius: 8px;
+  margin: auto;
+}
+
+/* Efeito Scanlines CRT */
+.scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 50;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  ), linear-gradient(
+    90deg,
+    rgba(255, 0, 0, 0.03),
+    rgba(0, 255, 0, 0.01),
+    rgba(0, 0, 255, 0.03)
+  );
+  background-size: 100% 3px, 6px 100%;
+  opacity: 0.8;
+}
+
+/* Telas Gerais */
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  z-index: 10;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ==========================================================
+   TELA 1: MENU PRINCIPAL
+   ========================================================== */
+#title-screen {
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.45) 0%, rgba(2, 6, 23, 0.82) 100%), url('../assets/cenas/inicial.jpg') center/cover no-repeat;
+  text-align: center;
+  gap: 15px;
+}
+
+.title-banner {
+  position: relative;
+  display: inline-block;
+  padding: 10px 30px;
+}
+
+.title-sub {
+  font-size: 10px;
+  color: var(--arcade-yellow);
+  letter-spacing: 3px;
+  margin-bottom: 5px;
+  text-shadow: 0 0 5px rgba(251, 191, 36, 0.8);
+}
+
+.main-title {
+  font-size: 38px;
+  color: #fff;
+  line-height: 1.1;
+  text-shadow: 3px 3px 0 #b91c1c, 6px 6px 0 #000;
+}
+
+.highlight-title {
+  color: var(--arcade-yellow);
+  text-shadow: 3px 3px 0 #b45309, 6px 6px 0 #000;
+}
+
+.title-badge {
+  display: inline-block;
+  background: #15803d;
+  color: #fef08a;
+  font-size: 11px;
+  padding: 5px 14px;
+  border-radius: 4px;
+  margin-top: 8px;
+  border: 2px solid #fef08a;
+  box-shadow: 0 3px 0 #000;
+}
+
+.title-flavor {
+  font-family: var(--font-arcade);
+  font-size: 22px;
+  color: #94a3b8;
+  max-width: 650px;
+  line-height: 1.2;
+}
+
+.menu-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 320px;
+  margin-top: 5px;
+}
+
+/* Botões Arcade */
+.arcade-btn {
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  padding: 12px 16px;
+  background: #2563eb;
+  color: #fff;
+  border: 3px solid #60a5fa;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #1d4ed8, 0 6px 0 #000;
+  transition: transform 0.08s, box-shadow 0.08s;
+  text-transform: uppercase;
+}
+
+.arcade-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+  box-shadow: 0 6px 0 #1d4ed8, 0 8px 0 #000;
+}
+
+.arcade-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 #1d4ed8, 0 3px 0 #000;
+}
+
+.start-btn {
+  background: #16a34a;
+  border-color: #4ade80;
+  box-shadow: 0 4px 0 #15803d, 0 6px 0 #000;
+  font-size: 12px;
+  animation: pulseButton 1.5s infinite;
+}
+
+@keyframes pulseButton {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.25); }
+}
+
+.secret-btn {
+  background: #d97706;
+  border-color: #fcd34d;
+  box-shadow: 0 4px 0 #b45309, 0 6px 0 #000;
+}
+
+.info-btn, .back-btn {
+  background: #475569;
+  border-color: #94a3b8;
+  box-shadow: 0 4px 0 #334155, 0 6px 0 #000;
+}
+
+.danger-btn {
+  background: #ea580c;
+  border-color: #fdba74;
+  box-shadow: 0 4px 0 #9a3412, 0 6px 0 #000;
+}
+
+.sound-toggle-btn {
+  background: none;
+  border: 1px dashed #64748b;
+  color: #94a3b8;
+  font-family: var(--font-pixel);
+  font-size: 9px;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.sound-toggle-btn:hover {
+  color: #fff;
+  border-color: #fff;
+}
+
+.title-credits {
+  font-size: 8px;
+  color: #64748b;
+  margin-top: 6px;
+}
+
+/* Guia Rápido de Controles na Tela de Título */
+.title-quick-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(250, 204, 21, 0.45);
+  border-radius: 20px;
+  padding: 5px 14px;
+  max-width: 860px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7), inset 0 0 10px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  margin-top: 4px;
+}
+
+.tqc-badge {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--arcade-yellow);
+  text-shadow: 0 0 5px rgba(250, 204, 21, 0.6);
+  margin-right: 2px;
+}
+
+.tqc-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.tqc-item {
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.tqc-item kbd, .guide-keys kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  background: #0f172a;
+  color: #fef08a;
+  border: 1px solid #64748b;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 #000;
+}
+
+/* ==========================================================
+   MODAIS (CÓDIGO SECRETO, INSTRUÇÕES, PÍLULAS)
+   ========================================================== */
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 60;
+  backdrop-filter: blur(2px);
+}
+
+.modal-box {
+  background: #1e293b;
+  border: 4px solid var(--arcade-yellow);
+  padding: 24px;
+  width: 600px;
+  max-width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
+  text-align: center;
+}
+
+.modal-box h3 {
+  font-size: 14px;
+  color: var(--arcade-yellow);
+  margin-bottom: 12px;
+}
+
+.modal-box p {
+  font-size: 10px;
+  color: #cbd5e1;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.secret-hint {
+  font-size: 9px;
+  color: #93c5fd;
+  margin-bottom: 15px;
+  background: #0f172a;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+#secret-input {
+  width: 80%;
+  padding: 10px;
+  background: #020617;
+  border: 3px solid #3b82f6;
+  color: #fef08a;
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 15px;
+  outline: none;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.secret-feedback {
+  font-size: 10px;
+  margin-top: 10px;
+  min-height: 16px;
+  color: #4ade80;
+}
+
+.instructions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  text-align: left;
+  font-size: 9px;
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  color: #e2e8f0;
+}
+
+.civic-note {
+  font-family: var(--font-arcade);
+  font-size: 20px;
+  color: #86efac;
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+/* Pílula de Cidadania Modal */
+.civic-card-box {
+  background: #064e3b;
+  border: 4px solid #facc15;
+  padding: 24px;
+  width: 650px;
+  max-width: 90%;
+  border-radius: 8px;
+  box-shadow: 0 0 30px rgba(16, 185, 129, 0.4);
+  text-align: center;
+}
+
+.civic-badge {
+  font-size: 11px;
+  color: #fef08a;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+#civic-title {
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 12px;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.civic-icon {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.civic-body {
+  font-family: var(--font-arcade);
+  font-size: 24px;
+  color: #f0fdf4;
+  line-height: 1.3;
+  margin-bottom: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.civic-stat-highlight {
+  font-size: 10px;
+  color: #fef08a;
+  background: #047857;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px dashed #facc15;
+  margin-bottom: 20px;
+}
+
+/* ==========================================================
+   TELA 2: SELEÇÃO DE PERSONAGENS
+   ========================================================== */
+#character-select-screen {
+  background: radial-gradient(circle at center, #1e1b4b 0%, #050515 100%);
+  justify-content: space-between;
+  padding: 25px 20px;
+}
+
+.select-header {
+  text-align: center;
+}
+
+.select-header h2 {
+  font-size: 15px;
+  color: var(--arcade-yellow);
+  text-shadow: 2px 2px 0 #000;
+  margin-bottom: 5px;
+}
+
+.select-sub {
+  font-size: 9px;
+  color: #94a3b8;
+}
+
+.character-carousel {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.char-card-select {
+  width: 130px;
+  height: 160px;
+  background: #1e293b;
+  border: 3px solid #475569;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 5px;
+  cursor: pointer;
+  transition: transform 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.char-card-select:hover {
+  transform: translateY(-5px);
+  border-color: #93c5fd;
+}
+
+.char-card-select.selected {
+  border-color: var(--arcade-gold);
+  background: #312e81;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+  transform: scale(1.06);
+}
+
+.char-avatar-box {
+  width: 70px;
+  height: 70px;
+  background: #0f172a;
+  border: 2px solid #334155;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 34px;
+  overflow: hidden;
+}
+
+.char-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 2px;
+  image-rendering: pixelated;
+}
+
+.char-card-name {
+  font-size: 9px;
+  color: #fff;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.char-card-style {
+  font-size: 7px;
+  color: #cbd5e1;
+  background: #475569;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.character-preview-card {
+  width: 820px;
+  max-width: 95%;
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid #3b82f6;
+  border-radius: 6px;
+  padding: 10px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.preview-portrait-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-hero-img {
+  width: 62px;
+  height: 62px;
+  object-fit: cover;
+  border: 2px solid var(--arcade-gold);
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+  image-rendering: pixelated;
+}
+
+.preview-col-left {
+  max-width: 60%;
+}
+
+.preview-col-right {
+  max-width: 38%;
+  color: #fef08a;
+  font-family: var(--font-arcade);
+  font-size: 19px;
+  line-height: 1.2;
+}
+
+.preview-special {
+  color: #67e8f9;
+}
+
+.preview-super {
+  color: #f43f5e;
+}
+
+.select-actions {
+  display: flex;
+  gap: 15px;
+}
+
+/* ==========================================================
+   TELA 3: TELA DE COMBATE & HUD
+   ========================================================== */
+#fight-screen {
+  padding: 0;
+  position: relative;
+  background: #000;
+}
+
+#fight-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+}
+
+/* HUD Superior */
+.fight-hud {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 20px;
+  z-index: 25;
+  pointer-events: none;
+}
+
+.fighter-status {
+  display: flex;
+  gap: 8px;
+  width: 360px;
+}
+
+.fighter-portrait-box {
+  width: 48px;
+  height: 48px;
+  background: #1e293b;
+  border: 3px solid #facc15;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  box-shadow: 0 3px 0 #000;
+  overflow: hidden;
+}
+
+.hud-portrait-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: pixelated;
+}
+
+.p2-portrait-box {
+  border-color: #ef4444;
+}
+
+.fighter-bars {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.name-tag {
+  font-size: 10px;
+  color: #fff;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.p2-name-tag {
+  text-align: right;
+  color: #fca5a5;
+}
+
+.life-bar-frame {
+  width: 100%;
+  height: 16px;
+  background: #374151;
+  border: 2px solid #000;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.life-bar-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #4ade80, #16a34a);
+  transition: width 0.15s ease-out;
+}
+
+.life-bar-fill.danger {
+  background: linear-gradient(to bottom, #ef4444, #991b1b);
+}
+
+.p2-fill {
+  float: right;
+  background: linear-gradient(to bottom, #fbbf24, #d97706);
+}
+
+.meters-row {
+  display: flex;
+  gap: 5px;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.p2-meters-row {
+  flex-direction: row-reverse;
+}
+
+.meter-frame {
+  flex: 1;
+  height: 11px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.special-meter-frame {
+  border-color: #0284c7;
+}
+
+.special-meter-frame.ready {
+  border-color: #38bdf8;
+  box-shadow: 0 0 8px #38bdf8;
+  animation: pulseSpecial 1s infinite alternate;
+}
+
+.super-meter-frame {
+  border-color: #b91c1c;
+}
+
+.super-meter-frame.ready {
+  border-color: #f43f5e;
+  box-shadow: 0 0 10px #f43f5e;
+  animation: pulseSuper 0.8s infinite alternate;
+}
+
+@keyframes pulseSpecial {
+  0% { box-shadow: 0 0 3px #0284c7; }
+  100% { box-shadow: 0 0 9px #38bdf8, 0 0 14px #facc15; }
+}
+
+@keyframes pulseSuper {
+  0% { box-shadow: 0 0 4px #b91c1c; }
+  100% { box-shadow: 0 0 12px #ef4444, 0 0 18px #f97316; }
+}
+
+.meter-fill {
+  width: 0%;
+  height: 100%;
+  transition: width 0.08s linear;
+}
+
+.special-fill {
+  background: linear-gradient(to right, #0284c7, #38bdf8, #facc15);
+}
+
+.super-fill {
+  background: linear-gradient(to right, #7c3aed, #ec4899, #ef4444);
+}
+
+.p2-meter .meter-fill {
+  float: right;
+}
+
+.p2-super-fill {
+  background: linear-gradient(to left, #dc2626, #f97316, #fbbf24);
+}
+
+.p2-special-fill {
+  background: linear-gradient(to left, #059669, #10b981, #6ee7b7);
+}
+
+.meter-label {
+  position: absolute;
+  top: 1px;
+  left: 4px;
+  font-size: 6px;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+  white-space: nowrap;
+}
+
+.p2-meter .meter-label {
+  left: auto;
+  right: 4px;
+}
+
+.sub-bars {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+.assist-status-badge {
+  font-size: 7px;
+  color: #86efac;
+  background: #064e3b;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #10b981;
+}
+
+.ai-difficulty-badge {
+  font-size: 7px;
+  color: #fca5a5;
+  background: #450a0a;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid #dc2626;
+}
+
+/* Centro do HUD */
+.hud-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.round-counter-banner {
+  font-size: 9px;
+  color: #facc15;
+  background: #000;
+  padding: 3px 8px;
+  border: 1px solid #4b5563;
+  border-radius: 2px;
+}
+
+.fight-timer {
+  font-size: 26px;
+  color: #fff;
+  text-shadow: 3px 3px 0 #b45309, 4px 4px 0 #000;
+}
+
+.stage-location-tag {
+  font-size: 7px;
+  color: #94a3b8;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+/* Anúncios no Centro da Luta */
+.fight-announcement {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 30;
+  pointer-events: none;
+  text-align: center;
+}
+
+.announcement-text {
+  font-size: 32px;
+  color: #facc15;
+  text-shadow: 4px 4px 0 #b91c1c, 6px 6px 0 #000;
+  animation: pulseBig 0.8s ease-out;
+}
+
+@keyframes pulseBig {
+  0% { transform: scale(0.3); opacity: 0; }
+  60% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Assist Alert Banner */
+.assist-banner {
+  position: absolute;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e3a8a;
+  border: 2px solid #60a5fa;
+  padding: 6px 14px;
+  border-radius: 4px;
+  z-index: 28;
+  pointer-events: none;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+}
+
+.assist-content {
+  font-size: 10px;
+  color: #fff;
+  text-shadow: 1px 1px 0 #000;
+}
+
+/* Controles Touch / On-screen */
+.touch-controls-container {
+  position: absolute;
+  bottom: max(10px, env(safe-area-inset-bottom, 10px));
+  left: 0;
+  width: 100%;
+  display: none; /* Oculto por padrão no Desktop para manter arena 100% limpa */
+  justify-content: space-between;
+  padding: 0 max(16px, env(safe-area-inset-right, 16px)) 0 max(16px, env(safe-area-inset-left, 16px));
+  z-index: 40;
+  pointer-events: none;
+}
+
+/* Exibir botões touch quando ativado pelo botão do HUD ou em dispositivos touch */
+.touch-controls-container.touch-enabled {
+  display: flex !important;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .touch-controls-container {
+    display: flex;
+  }
+}
+
+.touch-dpad {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  pointer-events: auto;
+}
+
+.dpad-mid {
+  display: flex;
+  gap: 4px;
+}
+
+.touch-actions {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  pointer-events: auto;
+}
+
+.touch-btn {
+  background: rgba(15, 23, 42, 0.78);
+  border: 2px solid #64748b;
+  color: #fff;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 3px 0 #000;
+  backdrop-filter: blur(4px);
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 0.05s ease, background 0.05s ease;
+}
+
+.touch-btn:active {
+  background: #3b82f6;
+  border-color: #93c5fd;
+  transform: translateY(2px) scale(0.94);
+  box-shadow: 0 1px 0 #000;
+}
+
+.action-punch { border-color: #3b82f6; }
+.action-kick { border-color: #f97316; }
+.action-special { border-color: #eab308; }
+.action-super { border-color: #ef4444; background: rgba(239, 68, 68, 0.3); }
+.action-assist { border-color: #10b981; background: rgba(16, 185, 129, 0.3); }
+
+/* Barra de Atalhos para Computador (Teclado) - Aparece suavemente no início do round e desvanece */
+.pc-controls-bar {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translate(-50%, 15px);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(250, 204, 21, 0.6);
+  padding: 6px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  z-index: 24;
+  font-family: var(--font-arcade);
+  font-size: 16px;
+  color: #e2e8f0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.8), 0 0 10px rgba(250, 204, 21, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.pc-controls-bar.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, 0);
+  animation: barEntrance 0.35s ease-out;
+}
+
+@keyframes barEntrance {
+  0% { transform: translate(-50%, 25px); opacity: 0; }
+  100% { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.pc-badge {
+  color: #facc15;
+  font-weight: bold;
+}
+
+.key-hint {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.key-hint kbd, .btn-kbd {
+  display: inline-block;
+  padding: 1px 5px;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  background: #0f172a;
+  color: #fef08a;
+  border: 1px solid #64748b;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 #000;
+  margin-right: 2px;
+}
+
+/* Feedback visual imediato quando tecla do computador é pressionada */
+.touch-btn.active-key {
+  background: #3b82f6 !important;
+  border-color: #93c5fd !important;
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 1px 0 #000 !important;
+}
+
+/* Botões especiais prontos com animação pulsante */
+.touch-btn.ready-special {
+  border-color: #38bdf8 !important;
+  background: rgba(2, 132, 199, 0.45) !important;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.8), 0 3px 0 #000 !important;
+  color: #fef08a !important;
+  animation: btnPulse 0.9s infinite alternate;
+}
+
+.touch-btn.ready-super {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.55) !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.9), 0 3px 0 #000 !important;
+  color: #fff !important;
+  animation: btnPulse 0.7s infinite alternate;
+}
+
+@keyframes btnPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.06); }
+}
+
+/* ==========================================================
+   TELA 4: VITÓRIA FINAL / GAME OVER
+   ========================================================== */
+#game-over-screen {
+  background: radial-gradient(circle at center, #111827 0%, #000 100%);
+  text-align: center;
+}
+
+.game-over-card {
+  background: #1f2937;
+  border: 4px solid var(--arcade-gold);
+  border-radius: 8px;
+  padding: 24px;
+  width: 600px;
+  max-width: 90%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+#game-over-title {
+  font-size: 18px;
+  color: var(--arcade-yellow);
+}
+
+.game-over-sub {
+  font-size: 9px;
+  color: #9ca3af;
+}
+
+.final-portrait {
+  font-size: 48px;
+  margin: 5px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.final-portrait-img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border: 3px solid var(--arcade-gold);
+  border-radius: 8px;
+  box-shadow: 0 0 18px rgba(245, 158, 11, 0.6);
+  image-rendering: pixelated;
+}
+
+.final-portrait-img.defeat-img {
+  border-color: #ef4444;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.6);
+}
+
+.final-speech {
+  font-family: var(--font-arcade);
+  font-size: 22px;
+  color: #86efac;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px 16px;
+  border-radius: 6px;
+  border-left: 4px solid #10b981;
+  line-height: 1.3;
+}
+
+.final-stats {
+  font-size: 9px;
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0;
+}
+
+.game-over-actions {
+  display: flex;
+  gap: 12px;
+}
+
+/* Responsividade para telas menores */
+@media (max-width: 768px) {
+  #game-container {
+    border-radius: 0;
+    border: none;
+  }
+  .main-title { font-size: 26px; }
+  .character-carousel { flex-wrap: wrap; }
+  .char-card-select { width: 90px; height: 130px; }
+  .fighter-status { width: 200px; }
+  .touch-btn { padding: 8px 10px; font-size: 7px; }
+}
+
+/* ==========================================================
+   QUALIDADE DE VIDA: ÁUDIO, TELA CHEIA E PAUSA
+   ========================================================== */
+
+.audio-toggle-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* Botões rápidos do HUD (Pausa e Tela Cheia) */
+.hud-quick-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.hud-icon-btn {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(250, 204, 21, 0.6);
+  color: #facc15;
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hud-icon-btn:hover {
+  background: #facc15;
+  color: #0f172a;
+  border-color: #fef08a;
+  transform: translateY(-1px);
+}
+
+.hud-icon-btn kbd {
+  font-family: monospace;
+  font-size: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  color: #fff;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+
+/* Modais de Pausa e Configurações */
+.pause-modal-box {
+  max-width: 580px;
+  width: 92%;
+  background: linear-gradient(180deg, #1e1b4b 0%, #090d16 100%);
+  border: 3px solid #facc15;
+  box-shadow: 0 0 35px rgba(250, 204, 21, 0.4), inset 0 0 20px rgba(0, 0, 0, 0.8);
+  padding: 16px 20px;
+}
+
+.settings-modal-box {
+  max-width: 480px;
+  background: linear-gradient(180deg, #1e1b4b 0%, #090d16 100%);
+  border: 3px solid #facc15;
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.35), inset 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.pause-header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.pause-icon {
+  font-size: 26px;
+  margin-bottom: 2px;
+  animation: pulse-pause 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-pause {
+  0% { transform: scale(1); filter: drop-shadow(0 0 4px #facc15); }
+  100% { transform: scale(1.15); filter: drop-shadow(0 0 12px #facc15); }
+}
+
+.pause-header h2 {
+  font-size: 15px;
+  color: #facc15;
+  margin: 0;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.pause-stage-info {
+  font-size: 8px;
+  color: #38bdf8;
+  margin-top: 3px;
+}
+
+/* Guia de Comandos dentro do Modal de Pausa */
+.pause-controls-guide {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.pause-guide-badge {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: var(--arcade-yellow);
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.pause-guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 14px;
+}
+
+.guide-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: var(--font-pixel);
+  font-size: 7px;
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(100, 116, 139, 0.25);
+}
+
+.guide-keys {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 7px;
+}
+
+.guide-desc {
+  color: #e2e8f0;
+}
+
+/* Sliders de Volume Retrô */
+.pause-sliders {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.settings-group {
+  margin-bottom: 10px;
+  background: rgba(15, 23, 42, 0.6);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.pause-sliders .settings-group {
+  margin-bottom: 0;
+  padding: 6px 10px;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  color: #e2e8f0;
+  margin-bottom: 6px;
+}
+
+.vol-label {
+  font-family: monospace;
+  font-size: 10px;
+  color: #facc15;
+  font-weight: bold;
+}
+
+.arcade-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: #334155;
+  border-radius: 4px;
+  outline: none;
+  border: 1px solid #64748b;
+  cursor: pointer;
+}
+
+.arcade-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: #facc15;
+  border: 2px solid #000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.arcade-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: #fef08a;
+}
+
+.arcade-slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: #facc15;
+  border: 2px solid #000;
+  cursor: pointer;
+}
+
+/* Ações da Pausa */
+.pause-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pause-actions .arcade-btn {
+  width: 100%;
+  padding: 8px 10px;
+  font-size: 8px;
+}
+
+/* Suporte à Tela Cheia Nativa */
+:fullscreen, :-webkit-full-screen {
+  background: #000 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+:fullscreen #game-container, :-webkit-full-screen #game-container {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* TELA 5: CENA FINAL CINEMÁTICA - POSSE DE LULA */
+#ending-screen {
+  background: radial-gradient(circle at center, rgba(15, 23, 42, 0.88) 0%, rgba(2, 6, 23, 0.98) 100%);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+#ending-screen.active {
+  display: flex;
+}
+
+.ending-cinematic-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 920px;
+  max-width: 96%;
+  height: 510px;
+  max-height: 96%;
+  background: rgba(15, 23, 42, 0.92);
+  border: 4px solid var(--arcade-gold);
+  border-radius: 8px;
+  box-shadow: 0 0 35px rgba(245, 158, 11, 0.4), inset 0 0 25px rgba(0, 0, 0, 0.8);
+  padding: 12px 20px;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.ending-header-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ending-badge {
+  font-family: var(--font-arcade);
+  font-size: 10px;
+  color: var(--arcade-yellow);
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
+}
+
+.ending-title {
+  font-family: "Outfit", sans-serif;
+  font-weight: 900;
+  font-size: 19px;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+  letter-spacing: 1px;
+}
+
+.ending-stage-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.ending-image-wrapper {
+  position: relative;
+  width: 580px;
+  height: 250px;
+  max-width: 90%;
+  border: 3px solid var(--arcade-gold);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 24px rgba(245, 158, 11, 0.55), 0 8px 16px rgba(0, 0, 0, 0.9);
+  background: #000;
+}
+
+.ending-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 25%;
+  display: block;
+}
+
+.ending-image-overlay {
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.ending-sash-seal {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid var(--arcade-yellow);
+  color: #facc15;
+  font-size: 8px;
+  font-family: var(--font-arcade);
+  padding: 4px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.ending-dialogue-box {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.75);
+  border: 2px solid #334155;
+  border-left: 6px solid #10b981;
+  border-radius: 6px;
+  padding: 8px 14px;
+  box-sizing: border-box;
+}
+
+.ending-speaker {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+
+.speaker-name {
+  font-family: var(--font-arcade);
+  font-size: 11px;
+  color: #facc15;
+}
+
+.speaker-role {
+  font-size: 8px;
+  color: #94a3b8;
+}
+
+.ending-speech-text {
+  font-family: "Outfit", sans-serif;
+  font-size: 14px;
+  line-height: 1.35;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.ending-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+/* ==========================================================
+   SUPORTE MOBILE & OVERLAY DE ROTAÇÃO DE DISPOSITIVO
+   ========================================================== */
+
+.rotate-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at center, #1e1b4b 0%, #020617 100%);
+  z-index: 99999;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  text-align: center;
+  box-sizing: border-box;
+  touch-action: none;
+}
+
+.rotate-overlay.dismissed {
+  display: none !important;
+}
+
+.rotate-box {
+  background: rgba(15, 23, 42, 0.95);
+  border: 3px solid #facc15;
+  border-radius: 12px;
+  padding: 24px 20px;
+  max-width: 320px;
+  box-shadow: 0 0 30px rgba(250, 204, 21, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.rotate-phone-icon {
+  font-size: 48px;
+  animation: rotatePhone 2s infinite ease-in-out alternate;
+}
+
+@keyframes rotatePhone {
+  0% { transform: rotate(0deg) scale(1); }
+  40% { transform: rotate(-90deg) scale(1.15); filter: drop-shadow(0 0 10px #facc15); }
+  100% { transform: rotate(-90deg) scale(1.15); filter: drop-shadow(0 0 10px #facc15); }
+}
+
+.rotate-title {
+  font-family: var(--font-pixel);
+  font-size: 14px;
+  color: #facc15;
+  text-shadow: 2px 2px 0 #000;
+}
+
+.rotate-sub {
+  font-family: var(--font-arcade);
+  font-size: 14px;
+  color: #38bdf8;
+}
+
+.rotate-desc {
+  font-family: var(--font-pixel);
+  font-size: 8px;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+
+.rotate-arrow {
+  font-size: 24px;
+  letter-spacing: 4px;
+}
+
+/* Ativação automática quando dispositivo pequeno estiver na vertical */
+@media screen and (max-width: 900px) and (orientation: portrait) {
+  .rotate-overlay:not(.dismissed) {
+    display: flex !important;
+  }
+}
+
+/* Ajustes especiais para telas mobile deitadas (Landscape) */
+@media screen and (max-height: 560px), screen and (max-width: 900px) and (orientation: landscape) {
+  body {
+    margin: 0;
+    padding: 0;
+    background: #000;
+  }
+  #game-container {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    width: min(100vw, calc(100vh * (16 / 9))) !important;
+    height: min(100vh, calc(100vw * (9 / 16))) !important;
+  }
+  .touch-controls-container {
+    bottom: 6px;
+  }
+  .touch-btn {
+    min-width: 42px;
+    min-height: 42px;
+    padding: 8px 10px;
+    font-size: 7px;
+  }
+}
+

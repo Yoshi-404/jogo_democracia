@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#020617">
+  <title>Democracia Fighter: A Batalha das Urnas</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗳️</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="game-container">
+    <!-- Overlay de Scanlines Retro Arcade -->
+    <div class="scanlines"></div>
+
+    <!-- TELA 1: MENU PRINCIPAL / TÍTULO -->
+    <div id="title-screen" class="screen active">
+      <div class="title-banner">
+        <div class="pixel-star-left">⭐</div>
+        <div class="title-sub">EDIÇÃO ESPECIAL 16-BIT</div>
+        <h1 class="main-title">DEMOCRACIA<br><span class="highlight-title">FIGHTER</span></h1>
+        <div class="title-badge">A BATALHA DAS URNAS</div>
+        <div class="pixel-star-right">⭐</div>
+      </div>
+
+      <div class="title-flavor">
+        "O jogo onde o voto é soberano e o golpe é só no tatame!"
+      </div>
+
+      <div class="menu-options">
+        <button id="btn-start" class="arcade-btn start-btn">▶ INICIAR CAMPANHA</button>
+        <button id="btn-watch-ending" class="arcade-btn" style="border-color: #facc15; color: #facc15;">🏆 CENA FINAL (POSSE)</button>
+        <button id="btn-secret-code" class="arcade-btn secret-btn">🔑 CÓDIGO SECRETO / URNA</button>
+        <button id="btn-instructions" class="arcade-btn info-btn">📜 COMO JOGAR</button>
+      </div>
+
+      <div class="audio-toggle-container">
+        <button id="btn-sound-toggle" class="sound-toggle-btn">🔊 SOM: LIGADO</button>
+        <button id="btn-audio-settings" class="sound-toggle-btn">⚙️ AJUSTES & VOLUME</button>
+        <button id="btn-title-fullscreen" class="sound-toggle-btn">⛶ TELA CHEIA</button>
+      </div>
+
+      <!-- Guia Rápido de Controles na Página Inicial -->
+      <div class="title-quick-controls">
+        <span class="tqc-badge">⌨️ CONTROLES:</span>
+        <div class="tqc-items">
+          <span class="tqc-item"><kbd>A</kbd><kbd>D</kbd> Andar</span>
+          <span class="tqc-item"><kbd>W</kbd> Pular</span>
+          <span class="tqc-item"><kbd>S</kbd> Defender</span>
+          <span class="tqc-item"><kbd>J</kbd> Soco</span>
+          <span class="tqc-item"><kbd>K</kbd> Chute</span>
+          <span class="tqc-item"><kbd>L</kbd> ⚡ Especial</span>
+          <span class="tqc-item"><kbd>U</kbd> 🔥 Super</span>
+          <span class="tqc-item"><kbd>I</kbd> 🤝 Apoio</span>
+          <span class="tqc-item"><kbd>P</kbd> ⏸️ Pausa</span>
+        </div>
+      </div>
+
+      <div class="title-credits">
+        Pressione ESPAÇO ou Toque para Iniciar • © 2026 Frente Democrática Arcade
+      </div>
+    </div>
+
+    <!-- MODAL: CÓDIGO SECRETO (DESBLOQUEIO DE BOSSES) -->
+    <div id="secret-modal" class="modal-overlay hidden">
+      <div class="modal-box">
+        <h3>🗳️ DIGITAÇÃO SECRETA NA URNA</h3>
+        <p>Insira a senha secreta para liberar os Chefes Ocultos ou vantagens:</p>
+        <div class="secret-hint">
+          Dicas: Digite <strong>13</strong>, <strong>BOLSO</strong>, <strong>VORCARO</strong>, <strong>CARLUXO</strong> ou <strong>FANDOM</strong>
+        </div>
+        <input type="text" id="secret-input" placeholder="DIGITE O CÓDIGO..." maxlength="15" autocomplete="off">
+        <div class="modal-actions">
+          <button id="btn-submit-code" class="arcade-btn">CONFIRMAR (VERDE)</button>
+          <button id="btn-close-secret" class="arcade-btn danger-btn">CORRIGIR (LARANJA)</button>
+        </div>
+        <div id="secret-feedback" class="secret-feedback"></div>
+      </div>
+    </div>
+
+    <!-- MODAL: INSTRUÇÕES E CONTROLES -->
+    <div id="instructions-modal" class="modal-overlay hidden">
+      <div class="modal-box instructions-box">
+        <h3>🎮 COMANDOS & MECÂNICAS (COMPUTADOR & TECLADO)</h3>
+        <div class="instructions-grid">
+          <div><strong>A / D ou ⬅️ ➡️</strong>: Mover para os lados</div>
+          <div><strong>W ou ⬆️ / Espaço</strong>: Pular</div>
+          <div><strong>S ou ⬇️</strong>: Defender / Agachar</div>
+          <div><strong>J (ou Z)</strong>: Soco Leve (Rápido)</div>
+          <div><strong>K (ou X)</strong>: Chute Forte (Dano alto)</div>
+          <div><strong>L (ou C)</strong>: ⚡ <strong>Ataque Especial</strong> (Carrega Rápido!)</div>
+          <div><strong>U ou E</strong>: 🔥 <strong>Super Golpe</strong> (Carrega Lento!)</div>
+          <div><strong>I ou Q</strong>: 🤝 <strong>Invocação de Apoio</strong> (Zé Gotinha / Fandoms)</div>
+        </div>
+        <div class="civic-note">
+          ⚡ <strong>SISTEMA DE CARREGAMENTO:</strong> O Especial e o Super precisam carregar até 100% para você poder atacar! O Especial carrega mais rápido que o Super. Bater e tomar dano aceleram a carga. <em>Atenção: os vilões também carregam seus golpes antes de atacar!</em>
+        </div>
+        <button id="btn-close-instructions" class="arcade-btn">ENTENDIDO! (PRESSIONE ENTER OU ESPAÇO)</button>
+      </div>
+    </div>
+
+    <!-- TELA 2: SELEÇÃO DE PERSONAGEM -->
+    <div id="character-select-screen" class="screen">
+      <div class="select-header">
+        <h2>ESCOLHA SEU DEFENSOR DA DEMOCRACIA</h2>
+        <div class="select-sub">SELECIONE O LUTADOR DO 1º TURNO:</div>
+      </div>
+
+      <div class="character-carousel" id="characters-container">
+        <!-- Renderizado dinamicamente via JS -->
+      </div>
+
+      <div class="character-preview-card" id="char-preview">
+        <!-- Detalhes do lutador selecionado -->
+      </div>
+
+      <div class="select-actions">
+        <button id="btn-confirm-char" class="arcade-btn start-btn">CONFIRMAR VOTO! (ENTRAR NO COMBATE)</button>
+        <button id="btn-back-menu" class="arcade-btn back-btn">⬅ VOLTAR AO MENU</button>
+      </div>
+    </div>
+
+    <!-- TELA 3: TELA DE COMBATE (CANVAS 2D) -->
+    <div id="fight-screen" class="screen">
+      <!-- HUD DE BATALHA RETRO -->
+      <div class="fight-hud">
+        <!-- Jogador 1 (Herói) -->
+        <div class="fighter-status p1-status">
+          <div class="fighter-portrait-box" id="p1-portrait">
+            <span class="portrait-avatar">⭐️</span>
+          </div>
+          <div class="fighter-bars">
+            <div class="name-tag" id="p1-name">LULA</div>
+            <div class="life-bar-frame">
+              <div class="life-bar-fill" id="p1-life-fill"></div>
+            </div>
+            <!-- Barras de Carregamento Especial e Super -->
+            <div class="meters-row">
+              <div class="meter-frame special-meter-frame" id="p1-special-frame" title="Especial (Carregamento Rápido - Tecla L)">
+                <div class="meter-fill special-fill" id="p1-special-fill"></div>
+                <span class="meter-label">⚡ ESP: <span id="p1-special-pct">0</span>%</span>
+              </div>
+              <div class="meter-frame super-meter-frame" id="p1-super-frame" title="Super Golpe (Carregamento Lento - Tecla U/E)">
+                <div class="meter-fill super-fill" id="p1-super-fill"></div>
+                <span class="meter-label">🔥 SUP: <span id="p1-super-pct">0</span>%</span>
+              </div>
+            </div>
+            <div class="sub-bars">
+              <div class="assist-status-badge" id="p1-assist-badge">
+                APOIO: <span id="assist-state-text">CARREGANDO...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Centro do HUD (Timer e Rounds) -->
+        <div class="hud-center">
+          <div class="round-counter-banner" id="round-banner">1º TURNO</div>
+          <div class="fight-timer" id="fight-timer">99</div>
+          <div class="stage-tag" id="stage-location-tag">ETAPA 1: ESTRADA</div>
+          <div class="hud-quick-actions">
+            <button id="btn-pause-game" class="hud-icon-btn" title="Pausar Combate (Tecla P ou Esc)">⏸️ PAUSA <kbd>P</kbd></button>
+            <button id="btn-hud-touch" class="hud-icon-btn" title="Exibir/Ocultar Botões Touch na Tela">🎮 TOUCH</button>
+            <button id="btn-hud-fullscreen" class="hud-icon-btn" title="Alternar Tela Cheia (F11)">⛶</button>
+          </div>
+        </div>
+
+        <!-- Jogador 2 (CPU / Oponente) -->
+        <div class="fighter-status p2-status">
+          <div class="fighter-bars p2-bars">
+            <div class="name-tag p2-name-tag" id="p2-name">NPC BOLSONARISTA</div>
+            <div class="life-bar-frame">
+              <div class="life-bar-fill p2-fill" id="p2-life-fill"></div>
+            </div>
+            <!-- Barras de Carregamento do Oponente (CPU) -->
+            <div class="meters-row p2-meters-row">
+              <div class="meter-frame super-meter-frame p2-meter" id="p2-super-frame" title="Super Golpe do Oponente">
+                <div class="meter-fill super-fill p2-super-fill" id="p2-super-fill"></div>
+                <span class="meter-label">🔥 SUP: <span id="p2-super-pct">0</span>%</span>
+              </div>
+              <div class="meter-frame special-meter-frame p2-meter" id="p2-special-frame" title="Especial do Oponente">
+                <div class="meter-fill special-fill p2-special-fill" id="p2-special-fill"></div>
+                <span class="meter-label">⚡ ESP: <span id="p2-special-pct">0</span>%</span>
+              </div>
+            </div>
+            <div class="sub-bars p2-sub-bars">
+              <div class="ai-difficulty-badge" id="ai-badge">NÍVEL 1</div>
+            </div>
+          </div>
+          <div class="fighter-portrait-box p2-portrait-box" id="p2-portrait">
+            <span class="portrait-avatar">🚙</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de Atalhos para Computador / Teclado (Exibida temporariamente no início do round) -->
+      <div class="pc-controls-bar" id="pc-controls-bar">
+        <span class="pc-badge">⌨️ COMANDOS:</span>
+        <span class="key-hint"><kbd>A/D</kbd> Andar</span>
+        <span class="key-hint"><kbd>W/Espaço</kbd> Pular</span>
+        <span class="key-hint"><kbd>S</kbd> Defender</span>
+        <span class="key-hint"><kbd>J</kbd> Soco</span>
+        <span class="key-hint"><kbd>K</kbd> Chute</span>
+        <span class="key-hint"><kbd>L</kbd> Especial ⚡</span>
+        <span class="key-hint"><kbd>U/E</kbd> Super 🔥</span>
+        <span class="key-hint"><kbd>I/Q</kbd> Apoio</span>
+        <span class="key-hint"><kbd>P</kbd> Pausar</span>
+      </div>
+
+      <!-- Anúncios Grandes no Meio da Tela -->
+      <div id="fight-announcement" class="fight-announcement hidden">
+        <div class="announcement-text" id="announcement-text">1º TURNO!</div>
+      </div>
+
+      <!-- Assist Alert Banner -->
+      <div id="assist-banner" class="assist-banner hidden">
+        <div class="assist-content" id="assist-content">💉 ZÉ GOTINHA EM AÇÃO! +CURA DE VIDA</div>
+      </div>
+
+      <!-- CANVAS PRINCIPAL DA LUTA -->
+      <canvas id="fight-canvas" width="960" height="540"></canvas>
+
+      <!-- CONTROLES TOUCH / MOBILE / CLIQUE -->
+      <div class="touch-controls-container" id="touch-controls">
+        <div class="touch-dpad">
+          <button class="touch-btn dpad-up" data-key="KeyW"><kbd class="btn-kbd">W</kbd> ⬆️</button>
+          <div class="dpad-mid">
+            <button class="touch-btn dpad-left" data-key="KeyA"><kbd class="btn-kbd">A</kbd> ⬅️</button>
+            <button class="touch-btn dpad-down" data-key="KeyS"><kbd class="btn-kbd">S</kbd> ⬇️</button>
+            <button class="touch-btn dpad-right" data-key="KeyD"><kbd class="btn-kbd">D</kbd> ➡️</button>
+          </div>
+        </div>
+        <div class="touch-actions">
+          <button class="touch-btn action-punch" data-key="KeyJ"><kbd class="btn-kbd">J</kbd> SOCO</button>
+          <button class="touch-btn action-kick" data-key="KeyK"><kbd class="btn-kbd">K</kbd> CHUTE</button>
+          <button class="touch-btn action-special" data-key="KeyL" id="btn-action-special"><kbd class="btn-kbd">L</kbd> <span id="label-special">⚡ ESP 0%</span></button>
+          <button class="touch-btn action-super" data-key="KeyU" id="btn-action-super"><kbd class="btn-kbd">U</kbd> <span id="label-super">🔥 SUP 0%</span></button>
+          <button class="touch-btn action-assist" data-key="KeyI"><kbd class="btn-kbd">I</kbd> APOIO</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: PÍLULA DE CIDADANIA & POLÍTICAS PÚBLICAS (ENTRE FASES) -->
+    <div id="civic-card-modal" class="modal-overlay hidden">
+      <div class="civic-card-box">
+        <div class="civic-badge">🗳️ VITÓRIA DA DEMOCRACIA! 🇧🇷</div>
+        <h2 id="civic-title">POLÍTICA PÚBLICA EM FOCO: O SUS</h2>
+        <div class="civic-icon" id="civic-icon">🏥</div>
+        <div class="civic-body" id="civic-text">
+          O Sistema Único de Saúde é uma das maiores conquistas da Constituição de 1988, garantindo acesso universal e gratuito à saúde para todos os brasileiros.
+        </div>
+        <div class="civic-stat-highlight" id="civic-stat">
+          📊 Impacto real: Mais de 190 milhões de brasileiros atendidos!
+        </div>
+        <div class="civic-action">
+          <button id="btn-next-stage" class="arcade-btn start-btn">SEGUINTE: AVANÇAR NO MAPA DO BRASIL ➡️</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: AJUSTES DE VOLUME & TELA CHEIA (MENU) -->
+    <div id="settings-modal" class="modal-overlay hidden">
+      <div class="modal-box settings-modal-box">
+        <h3>⚙️ AJUSTES & QUALIDADE DE VIDA</h3>
+        
+        <div class="settings-group">
+          <div class="slider-header">
+            <label for="bgm-slider">🎵 Volume Música Chiptune (BGM):</label>
+            <span id="bgm-vol-label" class="vol-label">60%</span>
+          </div>
+          <input type="range" id="bgm-slider" min="0" max="100" value="60" class="arcade-slider">
+        </div>
+
+        <div class="settings-group">
+          <div class="slider-header">
+            <label for="sfx-slider">🔊 Volume Efeitos Sonoros (SFX):</label>
+            <span id="sfx-vol-label" class="vol-label">80%</span>
+          </div>
+          <input type="range" id="sfx-slider" min="0" max="100" value="80" class="arcade-slider">
+        </div>
+
+        <div class="settings-group">
+          <button id="btn-settings-fullscreen" class="arcade-btn" style="width: 100%;">⛶ ALTERNAR TELA CHEIA (F11)</button>
+        </div>
+
+        <div class="modal-actions">
+          <button id="btn-close-settings" class="arcade-btn">SALVAR & FECHAR</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: PAUSA NO MEIO DO COMBATE -->
+    <div id="pause-modal" class="modal-overlay hidden">
+      <div class="modal-box pause-modal-box">
+        <div class="pause-header">
+          <div class="pause-icon">⏸️</div>
+          <h2>COMBATE PAUSADO</h2>
+          <div id="pause-stage-info" class="pause-stage-info">ETAPA 1: CARAVANA DA ANISTIA</div>
+        </div>
+
+        <div class="pause-sliders">
+          <div class="settings-group">
+            <div class="slider-header">
+              <label for="pause-bgm-slider">🎵 Música (BGM):</label>
+              <span id="pause-bgm-vol-label" class="vol-label">60%</span>
+            </div>
+            <input type="range" id="pause-bgm-slider" min="0" max="100" value="60" class="arcade-slider">
+          </div>
+
+          <div class="settings-group">
+            <div class="slider-header">
+              <label for="pause-sfx-slider">🔊 Efeitos (SFX):</label>
+              <span id="pause-sfx-vol-label" class="vol-label">80%</span>
+            </div>
+            <input type="range" id="pause-sfx-slider" min="0" max="100" value="80" class="arcade-slider">
+          </div>
+        </div>
+
+        <!-- Guia Completo de Comandos durante a Pausa -->
+        <div class="pause-controls-guide">
+          <div class="pause-guide-badge">🎮 GUIA DE COMANDOS DO COMBATE</div>
+          <div class="pause-guide-grid">
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>A</kbd> <kbd>D</kbd> / <kbd>⬅️</kbd> <kbd>➡️</kbd></span>
+              <span class="guide-desc">Andar / Esquiva</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>W</kbd> / <kbd>Espaço</kbd></span>
+              <span class="guide-desc">Pular</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>S</kbd> / <kbd>⬇️</kbd></span>
+              <span class="guide-desc">Defender / Agachar</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>J</kbd> (ou <kbd>Z</kbd>)</span>
+              <span class="guide-desc">Soco Leve (Rápido)</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>K</kbd> (ou <kbd>X</kbd>)</span>
+              <span class="guide-desc">Chute Forte (Dano)</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>L</kbd> (ou <kbd>C</kbd>)</span>
+              <span class="guide-desc">⚡ Golpe Especial</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>U</kbd> (ou <kbd>E</kbd>)</span>
+              <span class="guide-desc">🔥 Super Golpe</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>I</kbd> (ou <kbd>Q</kbd>)</span>
+              <span class="guide-desc">🤝 Chamar Apoio</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>P</kbd></span>
+              <span class="guide-desc">Pausar / Retomar</span>
+            </div>
+            <div class="guide-item">
+              <span class="guide-keys"><kbd>F11</kbd></span>
+              <span class="guide-desc">Tela Cheia</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="pause-actions">
+          <button id="btn-resume-game" class="arcade-btn start-btn">▶ CONTINUAR LUTA <kbd>P</kbd></button>
+          <button id="btn-pause-fullscreen" class="arcade-btn">⛶ TELA CHEIA (F11)</button>
+          <button id="btn-restart-stage" class="arcade-btn">🔄 REINICIAR ETAPA</button>
+          <button id="btn-pause-menu" class="arcade-btn back-btn">🏠 SAIR PARA O MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA: CENA FINAL CINEMÁTICA - POSSE DE LULA NO PALÁCIO DO PLANALTO -->
+    <div id="ending-screen" class="screen">
+      <div class="ending-cinematic-container">
+        <div class="ending-header-bar">
+          <span class="ending-badge">🏆 VITÓRIA NAS URNAS 2026 🏆</span>
+          <h1 class="ending-title">A POSSE POPULAR NO PALÁCIO DO PLANALTO</h1>
+        </div>
+
+        <div class="ending-stage-row">
+          <div class="ending-image-wrapper">
+            <img src="assets/cenas/cena_final_posse_lula.jpg" alt="Posse de Lula no Palácio do Planalto 2026" class="ending-hero-image" id="ending-hero-image">
+            <div class="ending-image-overlay"></div>
+            <div class="ending-sash-seal">🇧🇷 SUBIDA DA RAMPA 2026</div>
+          </div>
+        </div>
+
+        <div class="ending-dialogue-box">
+          <div class="ending-speaker">
+            <span class="speaker-name" id="ending-speaker-name">LUIZ INÁCIO LULA DA SILVA</span>
+            <span class="speaker-role" id="ending-speaker-role">Presidente da República Federativa do Brasil</span>
+          </div>
+          <p class="ending-speech-text" id="ending-speech-text">
+            "A democracia venceu o medo e a soberania popular subiu a rampa! Esta faixa não pertence a um indivíduo, ela pertence a cada trabalhador, a cada jovem e a todas as famílias brasileiras. O Brasil voltou a sorrir!"
+          </p>
+        </div>
+
+        <div class="ending-actions">
+          <button id="btn-ending-stats" class="arcade-btn start-btn">📊 ESTATÍSTICAS DA VITÓRIA</button>
+          <button id="btn-ending-replay" class="arcade-btn">🔄 JOGAR NOVAMENTE</button>
+          <button id="btn-ending-menu" class="arcade-btn back-btn">🏠 VOLTAR AO MENU</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TELA 4: VITÓRIA FINAL OU DERROTA (GAME OVER / CRÉDITOS) -->
+    <div id="game-over-screen" class="screen">
+      <div class="game-over-card" id="game-over-card">
+        <h1 id="game-over-title">VITÓRIA DA DEMOCRACIA!</h1>
+        <div id="game-over-sub" class="game-over-sub">O Brasil resistiu e as instituições prevaleceram!</div>
+        <div id="game-over-portrait" class="final-portrait">🏆</div>
+        <div id="game-over-speech" class="final-speech">"Nunca antes na história deste país o povo foi tão soberano!"</div>
+        
+        <div class="final-stats">
+          <div>Total de Rounds Vencidos: <span id="stat-rounds">0</span></div>
+          <div>Políticas Públicas Desbloqueadas: <span id="stat-civic">6/6</span></div>
+          <div>Invocação de Apoios: <span id="stat-assists">0</span></div>
+        </div>
+
+        <div class="game-over-actions">
+          <button id="btn-play-again" class="arcade-btn start-btn">🔄 JOGAR NOVAMENTE</button>
+          <button id="btn-menu-exit" class="arcade-btn back-btn">🏠 VOLTAR AO MENU</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AVISO DE GIRAR O CELULAR (QUANDO EM MODO RETRATO / VERTICAL) -->
+  <div id="rotate-device-overlay" class="rotate-overlay">
+    <div class="rotate-box">
+      <div class="rotate-phone-icon">📱</div>
+      <div class="rotate-title">GIRE O APARELHO</div>
+      <div class="rotate-sub">MODO HORIZONTAL NECESSÁRIO</div>
+      <div class="rotate-desc">
+        Para uma experiência épica de arcade com visão total da arena, por favor <strong>vire seu celular na horizontal (deitado)</strong>!
+      </div>
+      <div class="rotate-arrow">🔄 ➔ 📲</div>
+      <button id="btn-dismiss-rotate" class="arcade-btn" style="font-size: 8px; padding: 6px 12px; margin-top: 6px;">CONTINUAR MESMO ASSIM ⏩</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS MODULARES -->
+  <script src="js/audio.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/stages.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
