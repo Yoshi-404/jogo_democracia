@@ -1614,14 +1614,42 @@ class GameEngine {
     ctx.fillStyle = textGrad;
     ctx.fillText('K. O. !', w / 2, bannerCenterY - 11);
 
-    // Subtítulo Compacto e Centralizado
-    ctx.font = '700 8.5px "Press Start 2P", monospace';
+    // Subtítulo Perfeitamente Centralizado com Cartela Simétrica
+    ctx.save();
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.shadowColor = 'transparent';
+    ctx.shadowBlur = 0;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+
     const isPlayerWin = (kd.winner === 'player_won');
-    ctx.fillStyle = isPlayerWin ? '#4ade80' : '#f87171';
-    ctx.shadowColor = '#000000';
-    ctx.shadowBlur = 4;
-    const subText = isPlayerWin ? '⚡ VITÓRIA DA DEMOCRACIA! 🇧🇷' : '⚠️ DERROTA NAS URNAS! ⚠️';
+    const subText = isPlayerWin ? '★ VITÓRIA DA DEMOCRACIA ★' : '★ DERROTA NAS URNAS ★';
+    ctx.font = '700 11px "Outfit", sans-serif';
+
+    const textWidth = ctx.measureText(subText).width;
+    const pillW = textWidth + 28;
+    const pillH = 22;
+    const pillX = (w - pillW) / 2;
+    const pillY = bannerCenterY + 16 - (pillH / 2);
+
+    // Cartela elegante de fundo com contorno contrastante
+    ctx.fillStyle = isPlayerWin ? 'rgba(20, 83, 45, 0.92)' : 'rgba(127, 29, 29, 0.92)';
+    ctx.strokeStyle = isPlayerWin ? '#4ade80' : '#f87171';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    if (ctx.roundRect) {
+      ctx.roundRect(pillX, pillY, pillW, pillH, 4);
+    } else {
+      ctx.rect(pillX, pillY, pillW, pillH);
+    }
+    ctx.fill();
+    ctx.stroke();
+
+    // Texto perfeitamente centralizado no ponto médio do canvas (w / 2)
+    ctx.fillStyle = isPlayerWin ? '#86efac' : '#fca5a5';
     ctx.fillText(subText, w / 2, bannerCenterY + 16);
+    ctx.restore();
 
     ctx.restore();
   }
