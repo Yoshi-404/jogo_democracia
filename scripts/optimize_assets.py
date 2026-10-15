@@ -67,6 +67,22 @@ CHAR_CONFIGS = {
             'lost': 'normal.png'
         }
     },
+    'krenak': {
+        'folder': 'Ailton',
+        'files': {
+            'idle': 'normal.png',
+            'walk': 'walk.png',
+            'punch': 'punch.png',
+            'kick': 'kick.png',
+            'special': 'power.png',
+            'super': 'super.png',
+            'victory': 'victory.png',
+            'lost': 'normal.png',
+            'defense': 'defense.png',
+            'projectile': 'ataque.png',
+            'projectile_super': 'ataque - super.png'
+        }
+    },
     'npc': {
         'folder': 'NPC',
         'files': {
@@ -191,9 +207,14 @@ PORTRAIT_DIR = 'assets/portraits'
 os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(PORTRAIT_DIR, exist_ok=True)
 
+import sys
+
 TARGET_HEIGHT = 360
+target_chars = sys.argv[1:] if len(sys.argv) > 1 else list(CHAR_CONFIGS.keys())
 
 for cid, cfg in CHAR_CONFIGS.items():
+    if cid not in target_chars:
+        continue
     char_out = os.path.join(OUT_DIR, cid)
     os.makedirs(char_out, exist_ok=True)
     folder = cfg['folder']

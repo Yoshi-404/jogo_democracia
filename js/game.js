@@ -849,7 +849,7 @@ class GameEngine {
       return;
     }
 
-    if (this.player.state === 'punch' || this.player.state === 'kick' || this.player.state === 'special') {
+    if (this.player.state === 'punch' || this.player.state === 'kick' || this.player.state === 'special' || this.player.state === 'super') {
       if (this.player.stateTimer > 4) {
         this.inputBuffer = { action, timer: 8 };
         return;
@@ -892,6 +892,8 @@ class GameEngine {
         vx: this.player.special.speed * this.player.facing,
         color: this.player.special.projectileColor,
         damage: this.player.special.damage,
+        customSpriteKey: this.player.special.customSpriteKey || null,
+        drawSize: 58,
         owner: 'player'
       });
       this.updateHUD();
@@ -902,7 +904,7 @@ class GameEngine {
         return;
       }
       this.player.superMeter = 0;
-      this.player.state = 'special';
+      this.player.state = 'super';
       this.player.stateTimer = 45;
       AudioPlayer.playSuperFreeze();
       AudioPlayer.playSuper();
@@ -1426,7 +1428,7 @@ class GameEngine {
       } else {
         this.player.vx = 0;
         // Se estiver parado ou atacando, vira de frente para o oponente
-        if (this.player.state === 'idle' || this.player.state === 'punch' || this.player.state === 'kick' || this.player.state === 'special') {
+        if (this.player.state === 'idle' || this.player.state === 'punch' || this.player.state === 'kick' || this.player.state === 'special' || this.player.state === 'super') {
           this.player.facing = (this.player.x < this.opponent.x) ? 1 : -1;
         }
       }
@@ -1625,7 +1627,7 @@ class GameEngine {
       // 1. SUPER DO OPONENTE: Ativa Super Freeze Dramático quando atinge 100%!
       if ((opp.superMeter || 0) >= 100 && Math.random() < 0.7) {
         opp.superMeter = 0;
-        opp.state = 'special';
+        opp.state = 'super';
         opp.stateTimer = 45;
         AudioPlayer.playSuperFreeze();
         AudioPlayer.playSuper();

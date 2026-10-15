@@ -154,6 +154,38 @@ const HEROES = [
       color: '#ea580c'
     },
     quote: 'A juventude não aceita retrocesso, censura nem fanatismo. 2026 é o nosso futuro!'
+  },
+  {
+    id: 'krenak',
+    name: 'Ailton Krenak',
+    avatar: '🪶',
+    portrait: 'assets/portraits/krenak.png',
+    baseFacing: 1,
+    role: 'Imortal da ABL & Voz Originária / Ancestral Zoner',
+    colorHead: '#c68642',
+    colorHair: '#475569',
+    colorShirt: '#f8fafc',
+    colorTie: null,
+    colorPants: '#334155',
+    hasBeard: false,
+    speed: 4.4,
+    punchDmg: 7,
+    kickDmg: 12,
+    special: {
+      name: 'O Chamado do Rio Watu',
+      type: 'projectile',
+      projectileColor: '#10b981',
+      damage: 19,
+      speed: 7.2,
+      customSpriteKey: 'krenak_special'
+    },
+    superMove: {
+      name: 'Futuro Ancestral: Adiar o Fim do Mundo',
+      damage: 45,
+      color: '#06b6d4',
+      customSpriteKey: 'krenak_super'
+    },
+    quote: 'A terra não nos pertence, nós pertencemos à terra! E a democracia só existe com os povos da floresta em pé!'
   }
 ];
 

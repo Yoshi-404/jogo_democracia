@@ -13,11 +13,11 @@ class SpriteRenderer {
 
   loadAllSprites() {
     const characterIds = [
-      'lula', 'dilma', 'marina', 'erika', 'cortez',
+      'lula', 'dilma', 'marina', 'erika', 'cortez', 'krenak',
       'npc', 'campopiano', 'pavanato', 'moro', 'nikolas',
       'flavio', 'jair', 'vorcaro', 'carlos'
     ];
-    const states = ['idle', 'walk', 'punch', 'kick', 'special', 'super', 'victory', 'lost'];
+    const states = ['idle', 'walk', 'punch', 'kick', 'special', 'super', 'victory', 'lost', 'defense'];
 
     characterIds.forEach(id => {
       this.sprites[id] = {};
@@ -32,6 +32,14 @@ class SpriteRenderer {
     const vfxImg = new Image();
     vfxImg.src = 'assets/vfx/onda_vermelha.jpg';
     this.vfx['onda_vermelha'] = vfxImg;
+
+    const krenakSpecialProj = new Image();
+    krenakSpecialProj.src = 'assets/optimized/krenak/projectile.png';
+    this.vfx['krenak_special'] = krenakSpecialProj;
+
+    const krenakSuperProj = new Image();
+    krenakSuperProj.src = 'assets/optimized/krenak/projectile_super.png';
+    this.vfx['krenak_super'] = krenakSuperProj;
   }
 
   // Adiciona faíscas de impacto de golpe
@@ -95,6 +103,7 @@ class SpriteRenderer {
       else if (fighter.state === 'victory') targetSprite = charSprites.victory || charSprites.idle;
       else if (fighter.state === 'knocked') targetSprite = charSprites.lost || charSprites.idle;
       else if (fighter.state === 'hit') targetSprite = charSprites.punch || charSprites.idle;
+      else if (fighter.state === 'block') targetSprite = (charSprites.defense && charSprites.defense.naturalWidth > 0) ? charSprites.defense : charSprites.idle;
       else targetSprite = charSprites.idle;
     }
 
@@ -389,6 +398,17 @@ class SpriteRenderer {
   drawProjectile(ctx, proj) {
     ctx.save();
     ctx.translate(Math.floor(proj.x), Math.floor(proj.y));
+
+    // Se tiver sprite customizado (ex: Ciclone de Folhas do Krenak)
+    const customVfx = proj.customSpriteKey ? this.vfx[proj.customSpriteKey] : null;
+    if (customVfx && customVfx.complete && customVfx.naturalWidth > 0) {
+      proj.rot = (proj.rot || 0) + (proj.vx >= 0 ? 0.24 : -0.24);
+      ctx.rotate(proj.rot);
+      const size = proj.drawSize || 58;
+      ctx.drawImage(customVfx, -size / 2, -size / 2, size, size);
+      ctx.restore();
+      return;
+    }
 
     const glowColor = proj.color || '#ef4444';
     const dir = (proj.vx >= 0) ? -1 : 1;
