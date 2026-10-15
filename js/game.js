@@ -35,12 +35,23 @@ class GameEngine {
     this.superFreeze = null;
     this.combo = { count: 0, timer: 0, totalDamage: 0, lastBonus: 0 };
 
-    // Controles
+    // Controles & Mobile Quality of Life
     this.keys = {};
     this.lastTime = 0;
+    this.hapticsEnabled = localStorage.getItem('democracia_haptics') !== 'false';
+    this.inputBuffer = null;
 
     this.initDOM();
     this.initEvents();
+  }
+
+  // Vibração Tátil Otimizada para Celular (Haptic Feedback)
+  triggerHaptic(pattern = 15) {
+    if (this.hapticsEnabled && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      try {
+        navigator.vibrate(pattern);
+      } catch (err) {}
+    }
   }
 
   initDOM() {
@@ -409,33 +420,36 @@ class GameEngine {
       }
     });
 
-    // Controles Touch / On-screen / Clique com suporte Multi-touch
-    document.querySelectorAll('.touch-btn').forEach(btn => {
-      const code = btn.dataset.key;
-      btn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        this.keys[code] = true;
-        this.handleTouchAction(code);
-      }, { passive: false });
+    // Inicializa Sistema Touch de Alta Precisão (D-Pad Virtual & Multi-Touch Arcade)
+    this.setupTouchControls();
 
-      btn.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        this.keys[code] = false;
-      }, { passive: false });
+    // Alternador de Vibração Tátil (Configurações e Pausa)
+    const btnToggleHaptics = document.getElementById('btn-toggle-haptics');
+    const btnPauseHaptics = document.getElementById('btn-pause-haptics');
 
-      btn.addEventListener('touchcancel', (e) => {
-        e.preventDefault();
-        this.keys[code] = false;
-      }, { passive: false });
+    const updateHapticsLabels = () => {
+      const stateStr = this.hapticsEnabled ? 'ATIVADA' : 'DESATIVADA';
+      if (btnToggleHaptics) {
+        btnToggleHaptics.innerText = `📳 VIBRAÇÃO TÁTIL (CELULAR): ${stateStr}`;
+        btnToggleHaptics.classList.toggle('active', this.hapticsEnabled);
+      }
+      if (btnPauseHaptics) {
+        btnPauseHaptics.innerText = `📳 VIBRAÇÃO: ${stateStr}`;
+        btnPauseHaptics.classList.toggle('active', this.hapticsEnabled);
+      }
+    };
+    updateHapticsLabels();
 
-      btn.addEventListener('mousedown', (e) => {
-        this.keys[code] = true;
-        this.handleTouchAction(code);
-      });
-      btn.addEventListener('mouseup', (e) => {
-        this.keys[code] = false;
-      });
-    });
+    const handleHapticToggle = () => {
+      this.hapticsEnabled = !this.hapticsEnabled;
+      localStorage.setItem('democracia_haptics', this.hapticsEnabled ? 'true' : 'false');
+      AudioPlayer.playSelect();
+      if (this.hapticsEnabled) this.triggerHaptic([20, 35, 20]);
+      updateHapticsLabels();
+    };
+
+    if (btnToggleHaptics) btnToggleHaptics.addEventListener('click', handleHapticToggle);
+    if (btnPauseHaptics) btnPauseHaptics.addEventListener('click', handleHapticToggle);
 
     // Botão para dispensar o aviso de rotação de celular
     const btnDismissRotate = document.getElementById('btn-dismiss-rotate');
@@ -465,6 +479,203 @@ class GameEngine {
     document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
   }
 
+  // Configuração Completa do Sistema Touch Ergonômico para Celular
+  setupTouchControls() {
+    const dpadDisc = document.getElementById('touch-dpad-disc');
+    const dpadCluster = document.getElementById('touch-dpad-cluster');
+    const dpadNub = document.getElementById('dpad-center-nub');
+    const actionsCluster = document.getElementById('touch-actions-cluster');
+
+    let dpadTouchId = null;
+    const activeActionTouches = new Map(); // touchId -> elemento de botão
+
+    // Atualiza estado do D-Pad analógico/digital baseado nas coordenadas do toque
+    const updateDpadFromCoords = (clientX, clientY) => {
+      if (!dpadDisc) return;
+      const rect = dpadDisc.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const maxRadius = rect.width / 2;
+
+      const dx = clientX - centerX;
+      const dy = clientY - centerY;
+      const dist = Math.hypot(dx, dy);
+
+      // Movimento visual suave do nub central acompanhando o polegar
+      const clampDist = Math.min(dist, maxRadius * 0.52);
+      const angle = Math.atan2(dy, dx);
+      if (dpadNub) {
+        const nx = Math.cos(angle) * clampDist;
+        const ny = Math.sin(angle) * clampDist;
+        dpadNub.style.transform = `translate(${nx}px, ${ny}px)`;
+        dpadNub.classList.add('active');
+      }
+
+      // Zona morta no centro do D-Pad
+      if (dist < 12) {
+        this.setDpadKeys(false, false, false, false);
+        return;
+      }
+
+      // Converte ângulo radiano para graus (-180 a 180)
+      const deg = (angle * 180) / Math.PI;
+
+      // Suporte completo a 8 direções (incluindo diagonais para pular para a frente ou trás!)
+      let up = false, down = false, left = false, right = false;
+
+      if (deg >= -67.5 && deg <= 67.5) right = true;
+      if (deg >= 112.5 || deg <= -112.5) left = true;
+      if (deg >= -157.5 && deg <= -22.5) up = true;
+      if (deg >= 22.5 && deg <= 157.5) down = true;
+
+      this.setDpadKeys(up, down, left, right);
+    };
+
+    const resetDpad = () => {
+      dpadTouchId = null;
+      if (dpadNub) {
+        dpadNub.style.transform = 'translate(0, 0)';
+        dpadNub.classList.remove('active');
+      }
+      this.setDpadKeys(false, false, false, false);
+    };
+
+    if (dpadCluster) {
+      dpadCluster.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          if (dpadTouchId === null) {
+            dpadTouchId = t.identifier;
+            updateDpadFromCoords(t.clientX, t.clientY);
+            this.triggerHaptic(10);
+            break;
+          }
+        }
+      }, { passive: false });
+
+      dpadCluster.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          if (t.identifier === dpadTouchId) {
+            updateDpadFromCoords(t.clientX, t.clientY);
+            break;
+          }
+        }
+      }, { passive: false });
+
+      const onDpadEnd = (e) => {
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          if (e.changedTouches[i].identifier === dpadTouchId) {
+            resetDpad();
+            break;
+          }
+        }
+      };
+      dpadCluster.addEventListener('touchend', onDpadEnd, { passive: false });
+      dpadCluster.addEventListener('touchcancel', onDpadEnd, { passive: false });
+    }
+
+    // Gerenciador de Toque do Cluster de Ações com Suporte a Deslize (Slide) e Multi-Touch
+    const handleActionButtonTouch = (clientX, clientY, touchId) => {
+      const el = document.elementFromPoint(clientX, clientY);
+      const btn = el ? el.closest('.touch-actions-cluster .touch-btn') : null;
+      const lastBtn = activeActionTouches.get(touchId);
+
+      if (btn) {
+        const code = btn.dataset.key;
+        if (lastBtn !== btn) {
+          if (lastBtn) {
+            lastBtn.classList.remove('active-key');
+            if (lastBtn.dataset.key !== code) {
+              this.keys[lastBtn.dataset.key] = false;
+            }
+          }
+          activeActionTouches.set(touchId, btn);
+          btn.classList.add('active-key');
+          this.keys[code] = true;
+          this.handleTouchAction(code);
+          this.triggerHaptic(12);
+        }
+      } else {
+        if (lastBtn) {
+          lastBtn.classList.remove('active-key');
+          this.keys[lastBtn.dataset.key] = false;
+          activeActionTouches.delete(touchId);
+        }
+      }
+    };
+
+    if (actionsCluster) {
+      actionsCluster.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          handleActionButtonTouch(t.clientX, t.clientY, t.identifier);
+        }
+      }, { passive: false });
+
+      actionsCluster.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const t = e.changedTouches[i];
+          handleActionButtonTouch(t.clientX, t.clientY, t.identifier);
+        }
+      }, { passive: false });
+
+      const onActionEnd = (e) => {
+        e.preventDefault();
+        for (let i = 0; i < e.changedTouches.length; i++) {
+          const touchId = e.changedTouches[i].identifier;
+          const btn = activeActionTouches.get(touchId);
+          if (btn) {
+            btn.classList.remove('active-key');
+            this.keys[btn.dataset.key] = false;
+            activeActionTouches.delete(touchId);
+          }
+        }
+      };
+      actionsCluster.addEventListener('touchend', onActionEnd, { passive: false });
+      actionsCluster.addEventListener('touchcancel', onActionEnd, { passive: false });
+    }
+
+    // Suporte a Mouse (Fallback caso o jogador teste com o cursor no computador)
+    document.querySelectorAll('.touch-btn').forEach(btn => {
+      const code = btn.dataset.key;
+      btn.addEventListener('mousedown', () => {
+        this.keys[code] = true;
+        this.handleTouchAction(code);
+        btn.classList.add('active-key');
+      });
+      btn.addEventListener('mouseup', () => {
+        this.keys[code] = false;
+        btn.classList.remove('active-key');
+      });
+      btn.addEventListener('mouseleave', () => {
+        this.keys[code] = false;
+        btn.classList.remove('active-key');
+      });
+    });
+  }
+
+  setDpadKeys(up, down, left, right) {
+    this.keys['KeyW'] = up;
+    this.keys['KeyS'] = down;
+    this.keys['KeyA'] = left;
+    this.keys['KeyD'] = right;
+
+    const btnUp = document.querySelector('.dpad-up');
+    const btnDown = document.querySelector('.dpad-down');
+    const btnLeft = document.querySelector('.dpad-left');
+    const btnRight = document.querySelector('.dpad-right');
+
+    if (btnUp) btnUp.classList.toggle('active-key', up);
+    if (btnDown) btnDown.classList.toggle('active-key', down);
+    if (btnLeft) btnLeft.classList.toggle('active-key', left);
+    if (btnRight) btnRight.classList.toggle('active-key', right);
+  }
+
   handleTouchAction(code) {
     if (this.currentScreen !== 'fight') return;
     if (code === 'KeyJ') this.playerAction('punch');
@@ -472,6 +683,14 @@ class GameEngine {
     if (code === 'KeyL') this.playerAction('special');
     if (code === 'KeyU') this.playerAction('super');
     if (code === 'KeyI') this.callAssist();
+    if (code === 'KeyW') {
+      if (this.player && this.player.isGrounded) {
+        this.player.vy = -14;
+        this.player.isGrounded = false;
+        AudioPlayer.playJump();
+        this.triggerHaptic(12);
+      }
+    }
   }
 
   handleSecretCode() {
@@ -620,7 +839,29 @@ class GameEngine {
 
   // Ações do Jogador
   playerAction(action) {
-    if (this.isPaused || this.isRoundOver || this.player.state === 'hit' || this.player.state === 'knocked') return;
+    if (this.isPaused || this.isRoundOver) return;
+
+    // Buffer de Input Inteligente: Se estiver saindo de hit stun ou terminando golpe anterior, guarda na fila
+    if (this.player.state === 'hit' || this.player.state === 'knocked') {
+      if (this.player.state === 'hit' && this.player.stateTimer <= 8) {
+        this.inputBuffer = { action, timer: 10 };
+      }
+      return;
+    }
+
+    if (this.player.state === 'punch' || this.player.state === 'kick' || this.player.state === 'special') {
+      if (this.player.stateTimer > 4) {
+        this.inputBuffer = { action, timer: 8 };
+        return;
+      }
+    }
+
+    // Auto-alinhamento inteligente de direção: ao atacar próximo ao adversário, vira de frente automaticamente
+    if (Math.abs(this.player.x - this.opponent.x) < 280) {
+      this.player.facing = (this.player.x < this.opponent.x) ? 1 : -1;
+    }
+
+    this.triggerHaptic(12);
 
     if (action === 'punch') {
       this.player.state = 'punch';
@@ -642,6 +883,7 @@ class GameEngine {
       this.player.state = 'special';
       this.player.stateTimer = 25;
       AudioPlayer.playSpecial();
+      this.triggerHaptic(25);
 
       // Dispara projétil
       this.projectiles.push({
@@ -664,6 +906,7 @@ class GameEngine {
       this.player.stateTimer = 45;
       AudioPlayer.playSuperFreeze();
       AudioPlayer.playSuper();
+      this.triggerHaptic([40, 60, 80]);
       this.showAnnouncement(this.player.superMove.name.toUpperCase() + '!');
 
       // Ativa Super Freeze Dramático (0.5s de freeze, flash, tela escurecida e banner estilizado)
@@ -688,6 +931,7 @@ class GameEngine {
     this.assistTimer = 0;
     this.stats.assistsUsed++;
     AudioPlayer.playAssist();
+    this.triggerHaptic(25);
 
     // Escolhe o assist
     const assist = ASSISTS_LIST[this.stats.assistsUsed % ASSISTS_LIST.length];
@@ -733,6 +977,18 @@ class GameEngine {
         }
       }
 
+      // Sistema de Defesa Ativa do Jogador (Segurar S / Botão Defesa ou andar para trás afastando do golpe)
+      if (target === this.player && target.state !== 'hit' && target.state !== 'block') {
+        const isHoldingBack = (target.facing === 1 && (this.keys['KeyA'] || this.keys['ArrowLeft'])) ||
+                              (target.facing === -1 && (this.keys['KeyD'] || this.keys['ArrowRight']));
+        const isGuarding = this.keys['KeyS'] || this.keys['ArrowDown'] || isHoldingBack;
+        if (isGuarding && target.isGrounded) {
+          target.state = 'block';
+          target.stateTimer = 20;
+          this.triggerHaptic(20);
+        }
+      }
+
       // Se o alvo estiver defendendo, sofre apenas dano de raspão (chip damage)
       if (target.state === 'block') {
         AudioPlayer.playBlock();
@@ -741,7 +997,7 @@ class GameEngine {
         target.hp = Math.max(0, target.hp - chipDmg);
         target.vx = (target.x >= attacker.x ? 1 : -1) * 3.5;
         Sprites.addSparkle(target.x, target.y - 40, '#38bdf8');
-        this.showAnnouncement('🛡️ GOLPE DEFENDIDO!');
+        this.showAnnouncement(target === this.player ? '🛡️ DEFESA ATIVA! (-78% DANO)' : '🛡️ GOLPE DEFENDIDO!');
         this.updateHUD();
         return;
       }
@@ -778,6 +1034,13 @@ class GameEngine {
     const pushDir = (target.x >= (attacker ? attacker.x : 480)) ? 1 : -1;
     target.vx = pushDir * (isSuper ? 16 : 4);
 
+    // Feedback tátil no celular
+    if (target === this.player) {
+      this.triggerHaptic(isSuper ? [35, 45, 60] : 25);
+    } else {
+      this.triggerHaptic(18);
+    }
+
     // Tremor de tela de impacto proporcional
     this.triggerScreenShake(isSuper ? 28 : 10, isSuper ? 14 : 5);
 
@@ -799,6 +1062,7 @@ class GameEngine {
   triggerKODramatic(victim, attacker, winner, isSuper) {
     if (this.koDramatic || this.isRoundOver) return;
 
+    this.triggerHaptic([60, 50, 100]);
     AudioPlayer.playKO();
     this.triggerScreenShake(38, 20);
 
@@ -1003,6 +1267,18 @@ class GameEngine {
       }
     }
 
+    const btnAssist = document.getElementById('btn-action-assist');
+    const labelAssist = document.getElementById('label-assist');
+    if (btnAssist && labelAssist) {
+      if (this.assistTimer >= 100) {
+        btnAssist.classList.add('ready-assist');
+        labelAssist.innerText = '🤝 PRONTO!';
+      } else {
+        btnAssist.classList.remove('ready-assist');
+        labelAssist.innerText = `🤝 ${Math.floor(this.assistTimer)}%`;
+      }
+    }
+
     // Nomes e Avatares com Imagens Reais
     document.getElementById('p1-name').innerText = this.player.name.toUpperCase();
     const p1PortraitHtml = this.player.portrait ? 
@@ -1122,6 +1398,18 @@ class GameEngine {
       this.player.stateTimer--;
       if (this.player.stateTimer <= 0) {
         this.player.state = 'idle';
+      }
+    }
+
+    // Processamento do Buffer de Input (Executa combos fluídos sem perda de toques rápidos)
+    if (this.inputBuffer) {
+      this.inputBuffer.timer--;
+      if ((this.player.state === 'idle' || this.player.state === 'walk') && this.player.stateTimer <= 0) {
+        const bufferedAction = this.inputBuffer.action;
+        this.inputBuffer = null;
+        this.playerAction(bufferedAction);
+      } else if (this.inputBuffer.timer <= 0) {
+        this.inputBuffer = null;
       }
     }
 
@@ -1248,6 +1536,25 @@ class GameEngine {
 
       // Colisão do projétil com jogador
       if (p.owner === 'opponent' && Math.abs(p.x - this.player.x) < 30 && Math.abs(p.y - (this.player.y - 40)) < 40) {
+        const isHoldingBack = (p.vx > 0 && (this.keys['KeyA'] || this.keys['ArrowLeft'])) ||
+                              (p.vx < 0 && (this.keys['KeyD'] || this.keys['ArrowRight']));
+        const isGuarding = this.keys['KeyS'] || this.keys['ArrowDown'] || isHoldingBack;
+
+        if (isGuarding && this.player.state !== 'knocked') {
+          this.player.state = 'block';
+          this.player.stateTimer = 18;
+          AudioPlayer.playBlock();
+          this.triggerHaptic(20);
+          this.triggerScreenShake(7, 3);
+          const chip = Math.max(1, Math.floor(p.damage * 0.22));
+          this.player.hp = Math.max(0, this.player.hp - chip);
+          Sprites.addSparkle(p.x, p.y, '#38bdf8');
+          this.showAnnouncement('🛡️ PROJÉTIL DEFENDIDO!');
+          this.updateHUD();
+          this.projectiles.splice(i, 1);
+          continue;
+        }
+
         this.applyDamage(this.player, p.damage);
         Sprites.addSparkle(p.x, p.y, p.color);
         this.projectiles.splice(i, 1);

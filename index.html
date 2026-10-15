@@ -87,7 +87,7 @@
     <!-- MODAL: INSTRUÇÕES E CONTROLES -->
     <div id="instructions-modal" class="modal-overlay hidden">
       <div class="modal-box instructions-box">
-        <h3>🎮 COMANDOS & MECÂNICAS (COMPUTADOR & TECLADO)</h3>
+        <h3>🎮 COMANDOS & MECÂNICAS (PC & CELULAR)</h3>
         <div class="instructions-grid">
           <div><strong>A / D ou ⬅️ ➡️</strong>: Mover para os lados</div>
           <div><strong>W ou ⬆️ / Espaço</strong>: Pular</div>
@@ -98,8 +98,11 @@
           <div><strong>U ou E</strong>: 🔥 <strong>Super Golpe</strong> (Carrega Lento!)</div>
           <div><strong>I ou Q</strong>: 🤝 <strong>Invocação de Apoio</strong> (Zé Gotinha / Fandoms)</div>
         </div>
+        <div class="civic-note" style="margin-top: 6px; border-color: rgba(56, 189, 248, 0.4);">
+          📱 <strong>NO CELULAR:</strong> Deslize o dedo livremente no <strong>D-Pad à esquerda</strong> (deslize na diagonal para pular para a frente!). Use o <strong>cluster arcade à direita</strong> com botões ergonômicos de <strong>SOCO</strong>, <strong>CHUTE</strong>, <strong>PULO</strong> dedicado e <strong>DEFESA</strong>!
+        </div>
         <div class="civic-note">
-          ⚡ <strong>SISTEMA DE CARREGAMENTO:</strong> O Especial e o Super precisam carregar até 100% para você poder atacar! O Especial carrega mais rápido que o Super. Bater e tomar dano aceleram a carga. <em>Atenção: os vilões também carregam seus golpes antes de atacar!</em>
+          ⚡ <strong>SISTEMA DE CARREGAMENTO & DEFESA:</strong> O Especial e o Super precisam atingir 100% para você desferir. Segurar <strong>DEFESA (S)</strong> ou andar para trás reduz o dano recebido em 75%!
         </div>
         <button id="btn-close-instructions" class="arcade-btn">ENTENDIDO! (PRESSIONE ENTER OU ESPAÇO)</button>
       </div>
@@ -226,22 +229,79 @@
       <!-- CANVAS PRINCIPAL DA LUTA -->
       <canvas id="fight-canvas" width="960" height="540"></canvas>
 
-      <!-- CONTROLES TOUCH / MOBILE / CLIQUE -->
+      <!-- CONTROLES TOUCH / MOBILE / CLIQUE ERGONÔMICO ARCADE -->
       <div class="touch-controls-container" id="touch-controls">
-        <div class="touch-dpad">
-          <button class="touch-btn dpad-up" data-key="KeyW"><kbd class="btn-kbd">W</kbd> ⬆️</button>
-          <div class="dpad-mid">
-            <button class="touch-btn dpad-left" data-key="KeyA"><kbd class="btn-kbd">A</kbd> ⬅️</button>
-            <button class="touch-btn dpad-down" data-key="KeyS"><kbd class="btn-kbd">S</kbd> ⬇️</button>
-            <button class="touch-btn dpad-right" data-key="KeyD"><kbd class="btn-kbd">D</kbd> ➡️</button>
+        <!-- D-PAD VIRTUAL COM DISCO ANALÓGICO & SUPORTE A DESLIZE 8-DIREÇÕES -->
+        <div class="touch-dpad-cluster" id="touch-dpad-cluster">
+          <div class="touch-dpad-disc" id="touch-dpad-disc">
+            <button class="touch-btn dpad-btn dpad-up" data-key="KeyW" aria-label="Pular">
+              <span class="btn-icon">⬆️</span>
+              <kbd class="btn-kbd">W</kbd>
+            </button>
+            <div class="dpad-horizontal-row">
+              <button class="touch-btn dpad-btn dpad-left" data-key="KeyA" aria-label="Andar Esquerda">
+                <span class="btn-icon">⬅️</span>
+                <kbd class="btn-kbd">A</kbd>
+              </button>
+              <div class="dpad-center-nub" id="dpad-center-nub">
+                <span class="dpad-nub-dot"></span>
+              </div>
+              <button class="touch-btn dpad-btn dpad-right" data-key="KeyD" aria-label="Andar Direita">
+                <span class="btn-icon">➡️</span>
+                <kbd class="btn-kbd">D</kbd>
+              </button>
+            </div>
+            <button class="touch-btn dpad-btn dpad-down" data-key="KeyS" aria-label="Agachar / Defender">
+              <span class="btn-icon">⬇️</span>
+              <kbd class="btn-kbd">S</kbd>
+            </button>
           </div>
         </div>
-        <div class="touch-actions">
-          <button class="touch-btn action-punch" data-key="KeyJ"><kbd class="btn-kbd">J</kbd> SOCO</button>
-          <button class="touch-btn action-kick" data-key="KeyK"><kbd class="btn-kbd">K</kbd> CHUTE</button>
-          <button class="touch-btn action-special" data-key="KeyL" id="btn-action-special"><kbd class="btn-kbd">L</kbd> <span id="label-special">⚡ ESP 0%</span></button>
-          <button class="touch-btn action-super" data-key="KeyU" id="btn-action-super"><kbd class="btn-kbd">U</kbd> <span id="label-super">🔥 SUP 0%</span></button>
-          <button class="touch-btn action-assist" data-key="KeyI"><kbd class="btn-kbd">I</kbd> APOIO</button>
+
+        <!-- CLUSTER DE AÇÕES ERGONÔMICO EM ARCO ARCADE -->
+        <div class="touch-actions-cluster" id="touch-actions-cluster">
+          <!-- Linha Superior (Apoio e Especiais) -->
+          <div class="actions-row actions-top-row">
+            <button class="touch-btn action-assist" data-key="KeyI" id="btn-action-assist" title="Apoio Democrático">
+              <span class="btn-icon">🤝</span>
+              <span id="label-assist" class="btn-label-text">APOIO</span>
+              <kbd class="btn-kbd">I</kbd>
+            </button>
+            <button class="touch-btn action-special" data-key="KeyL" id="btn-action-special" title="Golpe Especial">
+              <span class="btn-icon">⚡</span>
+              <span id="label-special" class="btn-label-text">ESP 0%</span>
+              <kbd class="btn-kbd">L</kbd>
+            </button>
+            <button class="touch-btn action-super" data-key="KeyU" id="btn-action-super" title="Super Golpe">
+              <span class="btn-icon">🔥</span>
+              <span id="label-super" class="btn-label-text">SUP 0%</span>
+              <kbd class="btn-kbd">U</kbd>
+            </button>
+          </div>
+
+          <!-- Linha Inferior (Defesa, Soco, Chute e Pulo) -->
+          <div class="actions-row actions-main-row">
+            <button class="touch-btn action-guard" data-key="KeyS" id="btn-action-guard" title="Defender / Agachar">
+              <span class="btn-icon">🛡️</span>
+              <span class="btn-label-text">DEFESA</span>
+              <kbd class="btn-kbd">S</kbd>
+            </button>
+            <button class="touch-btn action-punch" data-key="KeyJ" id="btn-action-punch" title="Soco Rápido">
+              <span class="btn-icon">🥊</span>
+              <span class="btn-label-text">SOCO</span>
+              <kbd class="btn-kbd">J</kbd>
+            </button>
+            <button class="touch-btn action-kick" data-key="KeyK" id="btn-action-kick" title="Chute Forte">
+              <span class="btn-icon">🥋</span>
+              <span class="btn-label-text">CHUTE</span>
+              <kbd class="btn-kbd">K</kbd>
+            </button>
+            <button class="touch-btn action-jump" data-key="KeyW" id="btn-action-jump" title="Pular">
+              <span class="btn-icon">🚀</span>
+              <span class="btn-label-text">PULO</span>
+              <kbd class="btn-kbd">W</kbd>
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -283,6 +343,10 @@
             <span id="sfx-vol-label" class="vol-label">80%</span>
           </div>
           <input type="range" id="sfx-slider" min="0" max="100" value="80" class="arcade-slider">
+        </div>
+
+        <div class="settings-group">
+          <button id="btn-toggle-haptics" class="arcade-btn" style="width: 100%;">📳 VIBRAÇÃO TÁTIL (CELULAR): ATIVADA</button>
         </div>
 
         <div class="settings-group">
@@ -371,6 +435,7 @@
 
         <div class="pause-actions">
           <button id="btn-resume-game" class="arcade-btn start-btn">▶ CONTINUAR LUTA <kbd>P</kbd></button>
+          <button id="btn-pause-haptics" class="arcade-btn">📳 VIBRAÇÃO: ATIVADA</button>
           <button id="btn-pause-fullscreen" class="arcade-btn">⛶ TELA CHEIA (F11)</button>
           <button id="btn-restart-stage" class="arcade-btn">🔄 REINICIAR ETAPA</button>
           <button id="btn-pause-menu" class="arcade-btn back-btn">🏠 SAIR PARA O MENU</button>
